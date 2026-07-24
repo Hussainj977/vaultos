@@ -1,92 +1,91 @@
-"use client";
+import { useRouter } from 'expo-router';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-interface DashboardProps {
-  onNavigate: (view: string) => void;
-}
+import { ThemedText } from './themed-text';
+import { ThemedView } from './themed-view';
 
-const cards = [
-  { id: "tasks", title: "Daily Tasks", desc: "What needs to get done today", icon: "📋", color: "#3B82F6" },
-  { id: "projects", title: "Projects", desc: "Active work in progress", icon: "📁", color: "#8B5CF6" },
-  { id: "notes", title: "Notes", desc: "Quick thoughts and ideas", icon: "📝", color: "#10B981" },
-  { id: "ai", title: "Ask VaultOS anything", desc: "AI Assistant", icon: "🤖", color: "#F59E0B" },
+const CARDS = [
+  {
+    title: 'Daily Tasks',
+    subtitle: 'What needs to get done today',
+    route: '/tasks',
+  },
+  {
+    title: 'Projects',
+    subtitle: 'Active work in progress',
+    route: '/projects',
+  },
+  {
+    title: 'Notes',
+    subtitle: 'Quick thoughts and ideas',
+    route: '/notes',
+  },
+  {
+    title: 'AI Assistant',
+    subtitle: 'Ask VaultOS anything',
+    route: '/ai',
+  },
 ];
 
-export default function Dashboard({ onNavigate }: DashboardProps) {
-  return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#0f172a",
-      color: "#fff",
-      padding: "20px",
-      paddingBottom: "100px",
-    }}>
-      {/* Header */}
-      <div style={{ marginBottom: "24px" }}>
-        <h1 style={{
-          fontSize: "36px",
-          fontWeight: "bold",
-          margin: "0 0 8px 0",
-          color: "#fff",
-        }}>
-          VaultOS
-        </h1>
-        <p style={{
-          color: "#8895A5",
-          fontSize: "16px",
-          margin: 0,
-        }}>
-          Run your day. Build your future.
-        </p>
-      </div>
+export default function Dashboard() {
+  const router = useRouter();
 
-      {/* Cards - Stacked Vertically */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-        {cards.map((card) => (
-          <button
-            key={card.id}
-            onClick={() => onNavigate(card.id)}
-            style={{
-              background: "#1A2830",
-              borderRadius: "16px",
-              padding: "20px",
-              border: "1px solid transparent",
-              textAlign: "left",
-              cursor: "pointer",
-              transition: "all 0.3s ease",
-              width: "100%",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = "#1E293B";
-              e.currentTarget.style.borderColor = card.color;
-              e.currentTarget.style.transform = "translateY(-2px)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = "#1A2830";
-              e.currentTarget.style.borderColor = "transparent";
-              e.currentTarget.style.transform = "translateY(0)";
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "8px" }}>
-              <span style={{ fontSize: "28px" }}>{card.icon}</span>
-              <h2 style={{
-                fontSize: "22px",
-                fontWeight: "bold",
-                margin: 0,
-                color: "#fff",
-              }}>
-                {card.title}
-              </h2>
-            </div>
-            <p style={{
-              color: "#687789",
-              fontSize: "14px",
-              margin: "0 0 0 40px",
-            }}>
-              {card.desc}
-            </p>
-          </button>
+  return (
+    <ThemedView style={styles.container}>
+      <ThemedText type="title" style={styles.heading}>
+        VaultOS
+      </ThemedText>
+      <ThemedText type="subtitle" style={styles.tagline}>
+        Run your day. Build your future.
+      </ThemedText>
+
+      <View style={styles.cardList}>
+        {CARDS.map((card) => (
+          <Pressable
+            key={card.title}
+            style={({ pressed }) => [styles.card, pressed && styles.cardPressed]}
+            onPress={() => router.push(card.route)}>
+            <ThemedText style={styles.cardTitle}>{card.title}</ThemedText>
+            <ThemedText style={styles.cardSubtitle}>{card.subtitle}</ThemedText>
+          </Pressable>
         ))}
-      </div>
-    </div>
+      </View>
+    </ThemedView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 60,
+  },
+  heading: {
+    marginBottom: 4,
+  },
+  tagline: {
+    opacity: 0.7,
+    marginBottom: 32,
+  },
+  cardList: {
+    gap: 16,
+  },
+  card: {
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
+    backgroundColor: 'rgba(255,255,255,0.03)',
+  },
+  cardPressed: {
+    opacity: 0.6,
+  },
+  cardTitle: {
+    fontSize: 18,
+    marginBottom: 4,
+    fontWeight: '600',
+  },
+  cardSubtitle: {
+    opacity: 0.6,
+  },
+});

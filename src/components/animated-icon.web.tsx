@@ -1,53 +1,84 @@
 import { Image } from 'expo-image';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Animated, { Keyframe, Easing } from 'react-native-reanimated';
+import Animated, { Easing, Keyframe } from 'react-native-reanimated';
 
 import classes from './animated-icon.module.css';
-const DURATION = 300;
+
+const DURATION = 600;
 
 export function AnimatedSplashOverlay() {
-  return null;
-}
+  const [animate, setAnimate] = useState(false);
+  const [visible, setVisible] = useState(true);
 
-const keyframe = new Keyframe({
-  0: {
-    transform: [{ scale: 0 }],
-  },
-  60: {
-    transform: [{ scale: 1.2 }],
-    easing: Easing.elastic(1.2),
-  },
-  100: {
-    transform: [{ scale: 1 }],
-    easing: Easing.elastic(1.2),
-  },
-});
+  useEffect(() => {
+    if (animate) {
+      const timer = setTimeout(() => setVisible(false), DURATION);
+      return () => clearTimeout(timer);
+    }
+  }, [animate]);
+
+  if (!visible) return null;
+
+  const splashKeyframe = new Keyframe({
+    0: {
+      transform: [{ scale: 1 }],
+      opacity: 1,
+    },
+    20: {
+      opacity: 1,
+    },
+    70: {
+      opacity: 0,
+      easing: Easing.elastic(0.7),
+    },
+    100: {
+      opacity: 0,
+      transform: [{ scale: 1 }],
+      easing: Easing.elastic(0.7),
+    },
+  });
+
+  const image = <Image style={styles.image} source={require('@/assets/images/expo-logo.png')} />;
+
+  return animate ? (
+    <Animated.View entering={splashKeyframe.duration(DURATION)} style={styles.splashOverlay}>
+      {image}
+    </Animated.View>
+  ) : (
+    <View
+      onLayout={() => {
+        SplashScreen.hideAsync().finally(() => {
+          setAnimate(true);
+        });
+      }}
+      style={styles.splashOverlay}>
+      {image}
+    </View>
+  );
+}
 
 const logoKeyframe = new Keyframe({
   0: {
+    transform: [{ scale: 1.3 }],
     opacity: 0,
   },
-  60: {
-    transform: [{ scale: 1.2 }],
+  40: {
+    transform: [{ scale: 1.3 }],
     opacity: 0,
-    easing: Easing.elastic(1.2),
+    easing: Easing.elastic(0.7),
   },
   100: {
-    transform: [{ scale: 1 }],
     opacity: 1,
-    easing: Easing.elastic(1.2),
+    transform: [{ scale: 1 }],
+    easing: Easing.elastic(0.7),
   },
 });
 
 const glowKeyframe = new Keyframe({
   0: {
-    transform: [{ rotateZ: '-180deg' }, { scale: 0.8 }],
-    opacity: 0,
-  },
-  [DURATION / 1000]: {
-    transform: [{ rotateZ: '0deg' }, { scale: 1 }],
-    opacity: 1,
-    easing: Easing.elastic(0.7),
+    transform: [{ rotateZ: '0deg' }],
   },
   100: {
     transform: [{ rotateZ: '7200deg' }],
@@ -61,7 +92,7 @@ export function AnimatedIcon() {
         <Image style={styles.glow} source={require('@/assets/images/logo-glow.png')} />
       </Animated.View>
 
-      <Animated.View style={styles.background} entering={keyframe.duration(DURATION)}>
+      <Animated.View entering={logoKeyframe.duration(DURATION)} style={styles.background}>
         <div className={classes.expoLogoBackground} />
       </Animated.View>
 
@@ -73,13 +104,6 @@ export function AnimatedIcon() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    width: '100%',
-    zIndex: 1000,
-    position: 'absolute',
-    top: 128 / 2 + 138,
-  },
   imageContainer: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -94,15 +118,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 128,
     height: 128,
+    zIndex: 1000,
+    position: 'absolute',
+    top: 128 / 2 + 138,
   },
   image: {
-    position: 'absolute',
     width: 76,
     height: 71,
   },
   background: {
+    borderRadius: 40,
     width: 128,
     height: 128,
     position: 'absolute',
+  },
+  splashOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#208AEF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
   },
 });

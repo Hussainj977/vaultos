@@ -7,14 +7,30 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "backgroundColor": "#0d1117"
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0A0A14"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hussain.vaultos"
     },
     "android": {
-      "package": "com.outboundlabhq.vaultos"
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0A0A14"
+      },
+      "package": "com.hussain.vaultos"
+    },
+    "web": {
+      "favicon": "./assets/icon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "d7662318-e8c7-4b1f-b86b-deec4d69e6bf"
+        "projectId": "fc9932a5-02c1-4da4-8f9b-609f6808753c"
       }
     }
   }
